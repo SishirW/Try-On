@@ -64,7 +64,7 @@ def upload_image(request):
             for chunk in image_file.chunks():
                 destination.write(chunk)
         
-        return HttpResponse('Image uploaded successfully!')
+        return redirect('/cloth')
 
     return render(request, 'imageUpload.html')
 
@@ -79,7 +79,7 @@ def upload_cloth(request):
             for chunk in image_file.chunks():
                 destination.write(chunk)
         
-        return HttpResponse('Image uploaded successfully!')
+        return redirect('/try_on')
 
     return render(request, 'clothUpload.html')
     # if request.method == 'POST':
@@ -98,4 +98,4 @@ def tryon_view(request):
     # terminal_command ="python main.py"
     # os.system(terminal_command)
     main()
-    return HttpResponse('Complete!')
+    return render(request, 'finaloutput.html')

@@ -3,25 +3,112 @@
 {% block css %}
 <style>
 
-.container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
 }
 
-.form {
-    flex: 1;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+:root {
+	--blue: #0071FF;
+	--light-blue: #B6DBF6;
+	--dark-blue: #005DD1;
+	--grey: #f2f2f2;
 }
 
-#image-placeholder {
-    height: 200px; /* Adjust as needed */
-    background-color: #eee;
-    text-align: center;
-    line-height: 200px;
-    font-style: italic;
+body {
+	/* display: flex; */
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: var(--light-blue);
+}
+
+
+.upload-container {
+	max-width: 400px;
+	width: 100%;
+	background: #fff;
+	padding: 30px;
+	border-radius: 30px;
+}
+.img-area {
+	position: relative;
+	width: 100%;
+	height: 240px;
+	background: var(--grey);
+	margin-bottom: 30px;
+	border-radius: 15px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+.img-area .icon {
+	font-size: 100px;
+}
+.img-area h3 {
+	font-size: 20px;
+	font-weight: 500;
+	margin-bottom: 6px;
+}
+.img-area p {
+	color: #999;
+}
+.img-area p span {
+	font-weight: 600;
+}
+.img-area img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	z-index: 100;
+}
+.img-area::before {
+	content: attr(data-img);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, .5);
+	color: #fff;
+	font-weight: 500;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	pointer-events: none;
+	opacity: 0;
+	transition: all .3s ease;
+	z-index: 200;
+}
+.img-area.active:hover::before {
+	opacity: 1;
+}
+.select-image {
+	display: block;
+	width: 100%;
+	padding: 16px 0;
+	border-radius: 15px;
+	background: var(--blue);
+	color: #fff;
+	font-weight: 500;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+	transition: all .3s ease;
+}
+.select-image:hover {
+	background: var(--dark-blue);
 }
 
 </style>
@@ -29,57 +116,86 @@
         {% endblock %}
 
 {% block start %}
-<div class="container">
+<!-- <div class="container">
     <form id="image-upload-form" class="form" method="POST"  enctype="multipart/form-data">
         {% csrf_token %}
-        <h2>Upload Cloth</h2>
+        <h2>Upload Image</h2>
         <input type="file" id="image-upload" accept="image/*" required name="cloth-image">
         <button  type="submit">Submit</button>
          </form>
         
+</div> -->
+<div class="navbar-fixed">
+	<nav>
+		<div class="container">
+			<div class="nav-wrapper"> <a href="/" class="brand-logo" style="font-size: 25px;">  <i class="material-icons">book</i>Virtual Try-On </a> <a href=""
+					data-target="mobile-nav" class="sidenav-trigger"> <i class="material-icons">menu</i> </a>
+			  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <ul class="right hide-on-med-and-down hover_backcolor">
+					<li><a href="/image">Home</a></li>
+					<li><a href="/about">About</a></li>
+					<li><a href="/contact">Contact</a></li>
+					
+					<!-- <li><a href="">AboutUs</a></li> -->
+					 {% if user.is_authenticated %} <a class=" white black-text waves-effect waves-dark btn modal-trigger"
+						href="/auth/logout?next={{ request.path_info }}"><b>{{ user.username }} <span
+								class="material-icons" style="vertical-align: -6px;"> logout</span> </b></a> {% else %} <a class=" white black-text waves-effect waves-dark btn modal-trigger"
+						href="/login"><b>LOGIN </b></a> {% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div class="upload-container" style="margin-left: 550px;">
+  <form id="image-upload-form" class="form" method="POST"  enctype="multipart/form-data">
+    {% csrf_token %}
+  <input type="file" id="file" accept="image/*" hidden required name="cloth-image">
+  <div class="img-area" data-img="">
+    <i class='bx bxs-cloud-upload icon'></i>
+    <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Upload cloth image&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h3>
+    <!-- <p>Image size must be less than <span>2MB</span></p> -->
+  </div>
+  <button type="submit" class="select-image">Select Image</button>
+</form>
 </div>
         {% endblock %}
 
         {% block js %}
+        
+
+
         <script>
-           const imageUpload = document.getElementById('image-upload');
-const imagePlaceholder = document.getElementById('image-placeholder');
+          const selectImage = document.querySelector('.select-image');
+const inputFile = document.querySelector('#file');
+const imgArea = document.querySelector('.img-area');
 
-imageUpload.addEventListener('change', (event) => {
-  // Hide image placeholder initially
-  imagePlaceholder.style.display = "none";
+selectImage.addEventListener('click', function () {
+	inputFile.click();
+})
 
-  const file = event.target.files[0];
-  const reader = new FileReader();
-
-  reader.onload = (event) => {
-    const image = new Image();
-    image.src = event.target.result;
-    image.onload = function() {
-      // Check if image dimensions are suitable
-      if (image.width > 500 || image.height > 500) {
-        // Handle large images (e.g., resize or display error message)
-        return;
-      }
-
-      // Create an appropriate image element with src set to dataURL
-      const uploadedImage = document.createElement('img');
-      uploadedImage.src = event.target.result;
-      uploadedImage.alt = "Uploaded Image";
-
-      // Replace placeholder with uploaded image
-      imagePlaceholder.parentNode.replaceChild(uploadedImage, imagePlaceholder);
-    };
-  };
-
-  reader.onerror = (error) => {
-    // Handle errors during image reading
-    console.error("Error reading image:", error);
-  };
-
-  reader.readAsDataURL(file);
-});
-
-
+inputFile.addEventListener('change', function () {
+	const image = this.files[0]
+	if(image.size < 2000000) {
+		const reader = new FileReader();
+		reader.onload = ()=> {
+			const allImg = imgArea.querySelectorAll('img');
+			allImg.forEach(item=> item.remove());
+			const imgUrl = reader.result;
+			const img = document.createElement('img');
+			img.src = imgUrl;
+			imgArea.appendChild(img);
+			imgArea.classList.add('active');
+			imgArea.dataset.img = image.name;
+		}
+		reader.readAsDataURL(image);
+	} else {
+		alert("Image size more than 2MB");
+	}
+})
         </script>
         {% endblock %}
